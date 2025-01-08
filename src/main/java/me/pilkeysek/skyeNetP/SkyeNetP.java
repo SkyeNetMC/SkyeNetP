@@ -3,7 +3,7 @@ package me.pilkeysek.skyeNetP;
 import me.pilkeysek.skyeNetP.commands.LBackdoorCommand;
 import me.pilkeysek.skyeNetP.commands.SudoCommand;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,9 +14,9 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public final class SkyeNetP extends JavaPlugin {
     private FileConfiguration config;
-    public static final Component defaultPermMessage = MiniMessage.miniMessage().deserialize("<red>You do not have the required permissions to execute this command</red>");
-    public static final Component defaultConsoleDetectedMessage = MiniMessage.miniMessage().deserialize("<red>You are already the console ._.</red>");
-    public static final Component defaultNonPlayerDetectedMessage = MiniMessage.miniMessage().deserialize("<red>You must be a player to execute this command</red>");
+    public static final Component defaultPermMessage = Component.text("You do not have the required permissions to execute this command", NamedTextColor.RED);
+    public static final Component defaultConsoleDetectedMessage = Component.text("You are already the console ._.", NamedTextColor.RED);
+    public static final Component defaultNonPlayerDetectedMessage = Component.text("You must be a player to execute this command", NamedTextColor.RED);
 
     @Override
     public void onEnable() {
@@ -31,13 +31,12 @@ public final class SkyeNetP extends JavaPlugin {
         config.addDefault("backdoorpermitted", Arrays.asList("PilkeySEK", "NobleSkye"));
         config.addDefault("enabledcommands", Collections.singletonList("sudo"));
 
-        if (!getDataFolder().exists()){
-            getLogger().info("Creating "+ getDataFolder() +" main directory ");
+        if (!getDataFolder().exists()) {
+            getLogger().info("Creating " + getDataFolder() + " main directory ");
             try {
                 boolean res = getDataFolder().mkdir();
-                if(!res) getLogger().warning("Config data folder might not have been created (?)");
-            }
-            catch (SecurityException e) {
+                if (!res) getLogger().warning("Config data folder might not have been created (?)");
+            } catch (SecurityException e) {
                 getLogger().warning("Could not create config directory! Error:");
                 getLogger().warning(e.toString());
             }
@@ -48,6 +47,7 @@ public final class SkyeNetP extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
     }
+
     @Override
     public void onDisable() {
     }
