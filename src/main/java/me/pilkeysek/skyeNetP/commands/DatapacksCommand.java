@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ public class DatapacksCommand {
     public static void register(Commands commands) {
         commands.register(
                 Commands.literal("datapacks")
+                        .requires(commandSourceStack -> commandSourceStack.getSender() instanceof Player)
+                        .requires(commandSourceStack -> commandSourceStack.getSender().hasPermission("skyenetp.datapacks"))
                         .executes(context -> {
                             DatapackManager datapackManager = Bukkit.getDatapackManager();
                             List<Datapack> enabledPacks = new ArrayList<>(datapackManager.getEnabledPacks());
@@ -27,7 +30,7 @@ public class DatapacksCommand {
                                         .append(Component.text(pack.getName(), NamedTextColor.GRAY))
                                         .append(Component.text(']', NamedTextColor.GREEN))
                                         .hoverEvent(HoverEvent.showText(Component.text(pack.getName())));
-                                
+
                                 message = message.append(packText);
                                 if (i < enabledPacks.size() - 1) {
                                     message = message.append(Component.text(", ", NamedTextColor.GRAY));
