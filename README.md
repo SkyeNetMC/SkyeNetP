@@ -1,9 +1,9 @@
 # SkyeNetP
 The Paper plugin for SkyeNet
 
-## TODO
-[x] /fly in lobby
-[ ] /datapacks command for datapacks server
-[ ] Custom menu
-[ ] Cosmetics: 
-[ ] /swapranks command & gui
+## Features
+- [x] /fly in lobby
+- [x] /datapacks command for datapacks server
+- [x] Custom Gamemode Menu (/gamemodemenu)
+- [ ] Cosmetics
+- [ ] /swapranks command & gui
