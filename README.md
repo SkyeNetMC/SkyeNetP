@@ -2,5 +2,8 @@
 The Paper plugin for SkyeNet
 
 ## TODO
-- /fly in lobby
-- /datapacks command for datapacks server
+[x] /fly in lobby
+[ ] /datapacks command for datapacks server
+[ ] Custom menu
+[ ] Cosmetics: 
+[ ] /swapranks command & gui

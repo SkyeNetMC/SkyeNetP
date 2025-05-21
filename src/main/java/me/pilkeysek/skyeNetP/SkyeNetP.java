@@ -1,12 +1,8 @@
 package me.pilkeysek.skyeNetP;
 
-import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import me.pilkeysek.skyeNetP.commands.LBackdoorCommand;
-import me.pilkeysek.skyeNetP.commands.SudoCommand;
+import me.pilkeysek.skyeNetP.commands.GamemodeMenuCommand;
+import me.pilkeysek.skyeNetP.menu.GamemodeMenu;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SkyeNetP extends JavaPlugin {
@@ -16,15 +12,16 @@ public final class SkyeNetP extends JavaPlugin {
     public void onEnable() {
         config = this.getConfig();
         saveDefaultConfig();
-        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
-        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            final Commands commands = event.registrar();
-            LBackdoorCommand.register(commands);
-            SudoCommand.register(commands);
-        });
+        
+        // Register commands
+        this.getCommand("gamemodemenu").setExecutor(new GamemodeMenuCommand());
+        
+        // Register event listeners
+        getServer().getPluginManager().registerEvents(new GamemodeMenu(), this);
     }
 
     @Override
     public void onDisable() {
+        // Plugin shutdown logic
     }
 }

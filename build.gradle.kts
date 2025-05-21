@@ -1,7 +1,6 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("xyz.jpenilla.resource-factory-paper-convention") version "1.2.0"
 }
 
 group = "me.pilkeysek"
@@ -20,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 }
 
 val targetJavaVersion = 21
@@ -30,11 +29,6 @@ java {
 
 tasks {
     runServer {
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.4")
     }
-}
-
-paperPluginYaml {
-    main = "me.pilkeysek.skyeNetP.SkyeNetP"
-    apiVersion = "1.21"
 }
