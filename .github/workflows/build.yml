@@ -7,7 +7,8 @@ on:
     branches: [ "master" ]
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 jobs:
   build:
@@ -15,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -34,3 +37,36 @@ jobs:
         name: Plugin JAR
         path: build/libs/*.jar
         if-no-files-found: error
+
+    - name: Check commit message
+      id: check_commit
+      run: |
+        commit_msg=$(git log -1 --pretty=%B)
+        if [[ $commit_msg == release:* ]]; then
+          echo "is_release=true" >> $GITHUB_OUTPUT
+          version=$(echo $commit_msg | sed 's/release: //')
+        else
+          echo "is_release=false" >> $GITHUB_OUTPUT
+          version="beta-$(git rev-parse --short HEAD)"
+        fi
+        echo "version=$version" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      if: steps.check_commit.outputs.is_release == 'true'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/libs/*.jar
+        tag_name: v${{ steps.check_commit.outputs.version }}
+        name: Release ${{ steps.check_commit.outputs.version }}
+        draft: false
+        prerelease: false
+
+    - name: Create Beta Release
+      if: steps.check_commit.outputs.is_release != 'true'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/libs/*.jar
+        tag_name: beta-${{ github.sha }}
+        name: Beta Build ${{ steps.check_commit.outputs.version }}
+        draft: false
+        prerelease: true
