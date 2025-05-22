@@ -1,6 +1,6 @@
 package me.pilkeysek.skyeNetP.commands;
 
-import me.pilkeysek.skyeNetP.menu.GamemodeMenu;
+import me.pilkeysek.skyeNetP.menu.CreativeMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +19,7 @@ public class GamemodeMenuCommand implements CommandExecutor {
             return true;
         }
 
-        GamemodeMenu.openMenu(player);
+        CreativeMenu.openMenu(player);
         return true;
     }
 }

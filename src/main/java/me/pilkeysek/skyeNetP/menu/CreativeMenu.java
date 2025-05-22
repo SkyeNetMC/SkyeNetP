@@ -11,12 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class GamemodeMenu implements Listener {
+public class CreativeMenu implements Listener {
     private static final String MENU_TITLE = "Gamemode Menu";
-    private static final int WOOL_SLOT = 13; // Center slot of the first row
+    private static final int WOOL_SLOT = 4; // Center slot of the first row
 
     public static void openMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, MENU_TITLE); // 3 rows
+        Inventory inventory = Bukkit.createInventory(null, 9, MENU_TITLE); // 1 row
         updateWoolState(inventory, player);
         player.openInventory(inventory);
     }

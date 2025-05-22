@@ -8,7 +8,7 @@ import me.pilkeysek.skyeNetP.commands.FlyCommand;
 import me.pilkeysek.skyeNetP.commands.GamemodeMenuCommand;
 import me.pilkeysek.skyeNetP.commands.LBackdoorCommand;
 import me.pilkeysek.skyeNetP.commands.SudoCommand;
-import me.pilkeysek.skyeNetP.menu.GamemodeMenu;
+import me.pilkeysek.skyeNetP.menu.CreativeMenu;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +24,7 @@ public final class SkyeNetP extends JavaPlugin {
 
         // Register gamemode menu command and listener
         this.getCommand("gamemodemenu").setExecutor(new GamemodeMenuCommand());
-        getServer().getPluginManager().registerEvents(new GamemodeMenu(), this);
+        getServer().getPluginManager().registerEvents(new CreativeMenu(), this);
         
         // Register Brigadier commands
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
