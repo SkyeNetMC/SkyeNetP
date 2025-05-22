@@ -4,14 +4,22 @@ main: me.pilkeysek.skyeNetP.SkyeNetP
 api-version: '1.21'
 description: The paper plugin used for SkyeNetwork Developed by the SkyeNetwork Team
 website: https://skyemc.net
-authors: [pilkeysek, NobleSkye]
+authors: [SkyeNetwork Team]
+github-repo: "skyenetmc/skyenetp"
 commands:
-  gamemodemenu:
+  creative:
     description: Opens the gamemode menu
-    usage: /gamemodemenu
-    permission: skyenetp.gamemode.menu
+    usage: /creative
+    permission: skyenetp.command.creativemenu
+  skyenetp:
+    description: SkyeNetP plugin management
+    usage: /skyenetp reload
+    permission: skyenetp.command.reload
     
 permissions:
-  skyenetp.gamemode.menu:
-    description: Allows access to the gamemode menu
+  skyenetp.command.creativemenu:
+    description: Changes gamemode to creative & adventure for who has ranks
+    default: op
+  skyenetp.command.reload:
+    description: Allows reloading of the SkyeNetP plugin
     default: op

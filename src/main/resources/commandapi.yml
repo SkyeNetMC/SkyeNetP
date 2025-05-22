@@ -1,0 +1,4 @@
+# CommandAPI dependency for PaperMC
+commandapi:
+  # The version of the CommandAPI to use (update as needed)
+  version: 10.0.1

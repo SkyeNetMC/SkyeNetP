@@ -1,0 +1,6 @@
+# SkyeNetP Messages
+prefix: "<gradient:#00c3ff:#ffff1c>SkyeNetP</gradient> "
+reloaded: "<prefix><green>Config reloaded.</green>"
+no-permission: "<prefix><red>You do not have permission to use this command.</red>"
+player-only: "<prefix><red>This command can only be used by players!</red>"
+version: "<prefix><gray>SkyeNetP version <version></gray>"

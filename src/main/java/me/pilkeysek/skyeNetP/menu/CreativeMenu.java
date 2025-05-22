@@ -16,7 +16,7 @@ public class CreativeMenu implements Listener {
     private static final int WOOL_SLOT = 4; // Center slot of the first row
 
     public static void openMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, MENU_TITLE); // 1 row
+        Inventory inventory = Bukkit.createInventory(null, 9, MENU_TITLE); // 1 row, still the correct method
         updateWoolState(inventory, player);
         player.openInventory(inventory);
     }
@@ -24,6 +24,7 @@ public class CreativeMenu implements Listener {
     private static void updateWoolState(Inventory inventory, Player player) {
         ItemStack wool = new ItemStack(player.getGameMode() == GameMode.CREATIVE ? Material.RED_WOOL : Material.LIME_WOOL);
         ItemMeta meta = wool.getItemMeta();
+        // setDisplayName is still present, but may be marked deprecated in some IDEs; it is not removed. Use as is.
         meta.setDisplayName(player.getGameMode() == GameMode.CREATIVE ? 
             "§cClick to set Adventure Mode" : 
             "§aClick to set Creative Mode");
@@ -33,6 +34,7 @@ public class CreativeMenu implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        // getTitle is still present, but may be marked deprecated in some IDEs; it is not removed. Use as is.
         if (!event.getView().getTitle().equals(MENU_TITLE)) return;
         
         event.setCancelled(true);

@@ -1,0 +1,21 @@
+# SkyeGUIs - Example GUI panel (CommandPanels style)
+example:
+  title: "<gold>Example GUI"
+  size: 27
+  items:
+    11:
+      material: DIAMOND
+      name: "<aqua>Diamond Button"
+      lore:
+        - "<gray>Click to get a diamond!"
+      commands:
+        - "give %player% diamond 1"
+      close: true
+    15:
+      material: EMERALD
+      name: "<green>Emerald Button"
+      lore:
+        - "<gray>Click to get an emerald!"
+      commands:
+        - "give %player% emerald 1"
+      close: true

@@ -1,1 +1,15 @@
 enabledcommands: [sudo]
+
+modules:
+  GUIs:
+    enabled: true
+    prefix: "<gold>[<aqua>SkyeGUIs<gold>] "
+  ChatFilter:
+    enabled: true
+    regex: true
+    wordlist: true
+    blocked-words:
+      - "badword1"
+      - "badword2"
+    replacement: "<red>[Filtered]</red>"
+    regex-folder: "chatfilter-regex/"

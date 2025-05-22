@@ -14,7 +14,7 @@ public class GamemodeMenuCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("skyenetp.gamemode.menu")) {
+        if (!player.hasPermission("skyenetp.command.creativemenu")) {
             player.sendMessage("§cYou don't have permission to use this command!");
             return true;
         }

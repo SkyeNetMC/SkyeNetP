@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("dev.jorel:commandapi-bukkit-shade:9.7.0")
 }
 
 val targetJavaVersion = 21
@@ -28,6 +29,11 @@ java {
 }
 
 tasks {
+    processResources {
+        filesMatching("plugin.yml") {
+            expand(project.properties)
+        }
+    }
     runServer {
         minecraftVersion("1.21.4")
     }

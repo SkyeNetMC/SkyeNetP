@@ -1,0 +1,53 @@
+
+# SkyeNetP Chat Filter Configuration
+# This configuration file controls the chat filtering functionality
+
+# Master switch to enable/disable regex filtering
+Enable-regex: true
+
+# Permission to bypass all chat filters
+bypass-permission: skyenetp.chatfilter.bypass
+
+# Text to replace filtered content with
+replacement-text: "<red>[Filtered]</red>"
+
+# IP Address Blocking
+block-ips: true
+    regex: \b(?:\d{1,3}\.){3}\d{1,3}\b
+    # Also blocks common IP obfuscation attempts
+    advanced-regex: \b(?:\d{1,3}[\.,]\s*){3}\d{1,3}\b
+
+# Repeated Character Spam Prevention
+block-spam-chars: true
+    regex: (.)\1{4,}
+    threshold: 4  # Will block characters repeated more than this many times
+    whitelist:
+        - "..."   # Allow ellipsis
+        - "!!"    # Allow multiple exclamation marks
+
+# Excessive Caps Prevention
+block-caps: true
+    enabled: true
+    min-length: 6       # Minimum message length before checking caps
+    threshold: 60       # Percentage of caps allowed (0-100)
+
+# ASCII Art Prevention
+block-ascii-art: true
+    regex: (?:(?:\s*[^\w\s]{2,}\s*){3,})|(?:[^\w\s]{10,})
+
+# URL/Domain Filtering
+block-urls: true
+    regex: https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+    whitelist:
+        - "discord.gg"
+        - "imgur.com"
+        - "youtube.com"
+        - "youtu.be"
+
+# Custom Regex Patterns
+Custom-Regex: true
+custom-patterns:
+    swear-variants: (?i)f+[u\*\@]+c+k+|sh[i1!]+t+|b[i1]+t+c+h+
+    ip-obfuscated: (?i)(?:\d{1,3}[ .,_-]+){3}\d{1,3}
+    discord-tag: (?i)(?<!discord(?:\.gg)?\/)[a-zA-Z0-9_]{2,32}#\d{4}
+    token-pattern: [a-zA-Z0-9_-]{23,27}\.[a-zA-Z0-9_-]{6,10}\.[a-zA-Z0-9_-]{27,}
