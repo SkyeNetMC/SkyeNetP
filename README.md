@@ -21,5 +21,3 @@ The built plugin jar will be in `build/libs/`.
 > [!NOTE]  
 > commit done with `git commit -m "release: 1.0.0"` will make a new release
 > commit done with `git commit -m "Add new feature"` will make a new beta release
-
-test commit
