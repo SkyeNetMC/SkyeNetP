@@ -16,3 +16,8 @@ The built plugin jar will be in `build/libs/`.
 - [x] Custom Gamemode Menu (/gamemodemenu)
 - [ ] Cosmetics
 - [ ] /swapranks command & gui
+
+
+> [!NOTE]  
+> commit done with `git commit -m "release: 1.0.0"` will make a new release
+> commit done with `git commit -m "Add new feature"` will make a new beta release
