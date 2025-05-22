@@ -1,0 +1,18 @@
+# SkyeNetP Chat Filter - Wordlist Configuration
+# This file contains the list of blocked words
+
+# Enable or disable wordlist filtering
+enabled: true
+
+# Message sent when a word is blocked
+# Available placeholders:
+# <prefix> - Chat filter prefix
+# <word> - The blocked word that was found
+blocked-message: "<prefix>Your message was filtered for containing a blocked word: <word>"
+
+# List of blocked words (case-insensitive)
+list:
+  - badword1
+  - badword2
+  - inappropriate
+  - offensive

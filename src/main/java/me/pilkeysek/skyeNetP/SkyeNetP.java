@@ -11,6 +11,7 @@ import me.pilkeysek.skyeNetP.commands.DatapacksCommand;
 import me.pilkeysek.skyeNetP.commands.FlyCommand;
 import me.pilkeysek.skyeNetP.commands.GamemodeMenuCommand;
 import me.pilkeysek.skyeNetP.commands.SudoCommand;
+import me.pilkeysek.skyeNetP.commands.ChatFilterCommand;
 import me.pilkeysek.skyeNetP.menu.CreativeMenu;
 import me.pilkeysek.skyeNetP.modules.GUIModule;
 import me.pilkeysek.skyeNetP.modules.ChatFilterModule;
@@ -47,7 +48,7 @@ public final class SkyeNetP extends JavaPlugin {
         String msg = getRawMessage(key);
         String prefix = messagesConfig.getString("prefix", "");
         msg = msg.replace("<prefix>", prefix);
-        msg = msg.replace("<version>", getDescription().getVersion());
+        msg = msg.replace("<version>", this.getName());
         return miniMessage.deserialize(msg);
     }
 
@@ -74,11 +75,26 @@ public final class SkyeNetP extends JavaPlugin {
                 writer.write("# SkyeGUIs - Example GUI panel (CommandPanels style)\nexample:\n  title: \"<gold>Example GUI\"\n  size: 27\n  items:\n    11:\n      material: DIAMOND\n      name: \"<aqua>Diamond Button\"\n      lore:\n        - \"<gray>Click to get a diamond!\"\n      commands:\n        - \"give %player% diamond 1\"\n      close: true\n    15:\n      material: EMERALD\n      name: \"<green>Emerald Button\"\n      lore:\n        - \"<gray>Click to get an emerald!\"\n      commands:\n        - \"give %player% emerald 1\"\n      close: true\n");
             } catch (Exception ignored) {}
         }
-        File regexFile = new File(modulesFolder, "regex.txt");
+        // Create chatfilter folder
+        // Save default chat filter configs if they don't exist
+        File regexFile = new File(chatfilterFolder, "regex.yml");
         if (!regexFile.exists()) {
-            try (java.io.FileWriter writer = new java.io.FileWriter(regexFile)) {
-                writer.write("# Each line is a regex pattern to block in chat\n# Example: block IP addresses\n\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b\n# Example: block repeated characters\n(.)\\1{4,}\n");
-            } catch (Exception ignored) {}
+            try {
+                saveResource("chatfilter/regex.yml", false);
+                getLogger().info("Created default chat filter regex configuration.");
+            } catch (Exception e) {
+                getLogger().warning("Failed to create default chat filter regex configuration: " + e.getMessage());
+            }
+        }
+        
+        File wordlistFile = new File(chatfilterFolder, "wordlist.yml");
+        if (!wordlistFile.exists()) {
+            try {
+                saveResource("chatfilter/wordlist.yml", false);
+                getLogger().info("Created default chat filter wordlist configuration.");
+            } catch (Exception e) {
+                getLogger().warning("Failed to create default chat filter wordlist configuration: " + e.getMessage());
+            }
         }
 
         File configFile = new File(getDataFolder(), "config.yml");
@@ -88,7 +104,7 @@ public final class SkyeNetP extends JavaPlugin {
         config = this.getConfig();
         loadMessages();
 
-        // Initialize modules
+        // Initialize and register modules
         guiModule = new GUIModule(this);
         chatFilterModule = new ChatFilterModule(this);
 
@@ -96,11 +112,9 @@ public final class SkyeNetP extends JavaPlugin {
         this.getCommand("creative").setExecutor(new GamemodeMenuCommand());
         getServer().getPluginManager().registerEvents(new CreativeMenu(), this);
 
-        // Register ChatFilter if enabled
-        if (config.getConfigurationSection("modules.ChatFilter") != null &&
-            config.getBoolean("modules.ChatFilter.enabled", false)) {
-            getServer().getPluginManager().registerEvents(chatFilterModule, this);
-        }
+        // Always register ChatFilter (it checks enabled state internally)
+        getServer().getPluginManager().registerEvents(chatFilterModule, this);
+        new ChatFilterCommand(this, chatFilterModule);
 
         // Register GUI listener if enabled
         if (config.getConfigurationSection("modules.GUIs") != null &&
@@ -139,6 +153,8 @@ public final class SkyeNetP extends JavaPlugin {
             })
             )
             .register();
+
+
     }
 
     @Override

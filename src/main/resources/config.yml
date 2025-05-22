@@ -1,15 +1,23 @@
 enabledcommands: [sudo]
 
+# Module configuration
 modules:
+  # GUI Module Configuration
   GUIs:
     enabled: true
     prefix: "<gold>[<aqua>SkyeGUIs<gold>] "
+
+  # Chat Filter Module Configuration
   ChatFilter:
-    enabled: true
-    regex: true
-    wordlist: true
-    blocked-words:
+    enabled: true                           # Master switch for the chat filter
+    prefix: "<dark_red>[ChatFilter]</dark_red> "
+    regex:
+      enabled: true                         # Enable regex-based filtering
+      config-file: "modules/chatfilter/regex.yml"
+    wordlist:
+      enabled: true                         # Enable wordlist-based filtering
+      config-file: "modules/chatfilter/wordlist.yml"
+    blocked-words:                          # Global blocked words (in addition to wordlist.yml)
       - "badword1"
       - "badword2"
-    replacement: "<red>[Filtered]</red>"
-    regex-folder: "chatfilter-regex/"
+    replacement: "<red>[Filtered]</red>"    # Text to replace filtered content with

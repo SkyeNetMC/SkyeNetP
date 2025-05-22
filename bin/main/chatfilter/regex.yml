@@ -5,8 +5,14 @@
 # Master switch to enable/disable regex filtering
 Enable-regex: true
 
-# Permission to bypass all chat filters
-bypass-permission: skyenetp.chatfilter.bypass
+# Chat filter prefix (used in messages)
+prefix: "<dark_red>[ChatFilter]</dark_red> "
+
+# Message sent when a pattern is matched
+# Available placeholders:
+# <prefix> - Chat filter prefix
+# <pattern> - The type of pattern that was matched
+blocked-message: "<prefix>Your message was filtered by pattern: <pattern>"
 
 # Text to replace filtered content with
 replacement-text: "<red>[Filtered]</red>"
