@@ -19,6 +19,3 @@ example:
       commands:
         - "give %player% emerald 1"
       close: true
-  command: testgui
-  permission: skynetp.guis.example
-  permission-message: "<red>You do not have permission to use this GUI."
