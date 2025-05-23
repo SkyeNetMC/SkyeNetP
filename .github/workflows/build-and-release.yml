@@ -1,0 +1,65 @@
+name: Build and Release Plugin
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.gradle/caches
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          gradle-${{ runner.os }}
+
+    - name: Build the plugin
+      run: ./gradlew build
+
+    - name: Extract plugin version
+      id: extract_version
+      run: |
+        VERSION=$(grep -oP 'version = \"\K[^"]+' build.gradle.kts)
+        echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
+        path: build/libs/SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.PLUGIN_VERSION }}
+        release_name: SkyeNetP v${{ env.PLUGIN_VERSION }}
+        draft: false
+        prerelease: false
+        files: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
