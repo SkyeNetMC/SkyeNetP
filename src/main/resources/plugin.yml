@@ -5,7 +5,7 @@ api-version: '1.21'
 description: The paper plugin used for SkyeNetwork Developed by the SkyeNetwork Team
 website: https://skyemc.net
 authors: [SkyeNetwork Team]
-github-repo: "skyenetmc/skyenetp"
+modrinth-project-id: "IBSpJfbm"
 commands:
   creative:
     description: Opens the gamemode menu

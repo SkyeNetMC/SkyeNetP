@@ -2,6 +2,31 @@
 
 ## Features
 
+
+## Commands
+
+### `/fly`
+- Toggles flight mode for the player.
+- Permission: `skyenetp.fly`
+
+### `/datapacks`
+- Lists all active datapacks on the server.
+- Permission: `skyenetp.datapacks`
+
+### `/datapacklist`
+- Enables `/datapack list` but stopping /datapack enable/disable from being used. - used on our SMP server
+- Permission: `skyenetp.datapacklist`
+
+
+
+### `/chatfilter reload`
+- Reloads the chat filter configuration files (`wordlist.yml` and `regex.yml`).
+- Permission: `skyenetp.chatfilter.reload`
+
+
+<details>
+<summary>### Chat Filter Info & Configuration</summary>
+
 ### Chat Filter Module
 The Chat Filter Module provides advanced chat filtering capabilities for your Minecraft server. It includes the following features:
 
@@ -54,11 +79,9 @@ The Chat Filter Module provides advanced chat filtering capabilities for your Mi
   bypass-permission: skyenetp.regex.bypass
   ```
 
-## Commands
 
-### `/chatfilter reload`
-- Reloads the chat filter configuration files (`wordlist.yml` and `regex.yml`).
-- Permission: `skyenetp.chatfilter.reload`
+
+</details>
 
 ## Permissions
 
