@@ -111,6 +111,17 @@ public class ChatFilterModule implements Listener {
         
         bypassPermission = regexConfig.getString("bypass-permission", "skyenetp.chatfilter.bypass");
 
+        // Add bypass permission checks for regex and wordlist in the configuration
+        if (regexConfig.getBoolean("Enable-regex", true)) {
+            bypassPermission = regexConfig.getString("bypass-permission", "skyenetp.regex.bypass");
+            plugin.getLogger().info("Regex bypass permission: " + bypassPermission);
+        }
+
+        if (wordlistConfig.getBoolean("enabled", true)) {
+            bypassPermission = wordlistConfig.getString("bypass-permission", "skyenetp.wordlist.bypass");
+            plugin.getLogger().info("Wordlist bypass permission: " + bypassPermission);
+        }
+
         // Load regex patterns if enabled
         if (regexConfig.getBoolean("Enable-regex", true)) {
             loadPatterns();
@@ -308,31 +319,19 @@ public class ChatFilterModule implements Listener {
             return;
         }
 
-        // Check for bypass permission
-        if (event.getPlayer().hasPermission(bypassPermission)) {
-            plugin.getLogger().info("Player has bypass permission: " + bypassPermission);
-            return;
-        }
+        // Use dynamically fetched bypass permissions instead of hardcoded ones
+        String wordlistBypassPermission = wordlistConfig.getString("bypass-permission", "skyenetp.wordlist.bypass");
+        String regexBypassPermission = regexConfig.getString("bypass-permission", "skyenetp.regex.bypass");
 
-        // Reload configs periodically
-        if (System.currentTimeMillis() - lastLoaded > reloadInterval) {
-            loadConfigs();
-            lastLoaded = System.currentTimeMillis();
-        }
-
-        // Get the original message as plain text
-        String originalMessage = plainSerializer.serialize(event.message());
-        plugin.getLogger().info("Original message: \"" + originalMessage + "\"");
-        
-        // The message that will be modified if filtering is applied
-        Component finalMessage = event.message();
-        boolean filtered = false;
-
-        // Remove hardcoded badword1 check and rely on the dynamic blockedWords list
-        if (!event.getPlayer().hasPermission("skyenetp.wordlist.bypass") && 
+        // Check for bypass permission dynamically
+        if (event.getPlayer().hasPermission(wordlistBypassPermission) && 
             plugin.getConfig().getBoolean("modules.ChatFilter.wordlist.enabled", true)) {
-
+            plugin.getLogger().info("Wordlist check skipped - player has bypass permission: " + wordlistBypassPermission);
+        } else {
             plugin.getLogger().info("Checking message against wordlist. Words loaded: " + blockedWords.size());
+            // Add debug logs to verify blockedWords and message content
+            plugin.getLogger().info("Blocked words loaded: " + blockedWords);
+            plugin.getLogger().info("Original message for wordlist check: " + plainSerializer.serialize(event.message()));
 
             String wordlistMsg = wordlistConfig.getString("blocked-message", "<prefix>Your message was filtered for containing a blocked word: <word>");
 
@@ -341,7 +340,7 @@ public class ChatFilterModule implements Listener {
                     continue;
                 }
 
-                String currentMessage = plainSerializer.serialize(finalMessage);
+                String currentMessage = plainSerializer.serialize(event.message());
                 String lowercaseWord = word.toLowerCase();
                 String lowercaseMessage = currentMessage.toLowerCase();
 
@@ -358,31 +357,22 @@ public class ChatFilterModule implements Listener {
 
                         plugin.getLogger().info("Replacing \"" + actualWord + "\" with filtered text");
 
-                        finalMessage = replaceText(finalMessage, actualWord, replacement);
-                        filtered = true;
+                        event.message(replaceText(event.message(), actualWord, replacement));
 
                         event.getPlayer().sendMessage(miniMessage.deserialize(
                             wordlistMsg.replace("<prefix>", prefix).replace("<word>", word)
                         ));
-
-                        event.message(finalMessage);
                     } else {
                         plugin.getLogger().warning("Found word but couldn't locate it in the message text");
                     }
                 }
             }
-
-            if (!filtered) {
-                plugin.getLogger().info("No blocked words found in message");
-            }
-        } else {
-            plugin.getLogger().info("Wordlist check skipped - either bypassed or disabled");
         }
 
-        // Check regex patterns if enabled and not bypassed
-        if (!event.getPlayer().hasPermission("skyenetp.regex.bypass") && 
+        if (event.getPlayer().hasPermission(regexBypassPermission) && 
             plugin.getConfig().getBoolean("modules.ChatFilter.regex.enabled", true)) {
-            
+            plugin.getLogger().info("Regex check skipped - player has bypass permission: " + regexBypassPermission);
+        } else {
             plugin.getLogger().info("Checking regex patterns");
             String regexMsg = regexConfig.getString("blocked-message", "<prefix>Your message was filtered by pattern: <pattern>");
 
@@ -391,6 +381,7 @@ public class ChatFilterModule implements Listener {
                 plugin.getLogger().info("Checking IP patterns (" + ipPatterns.size() + " patterns)");
                 
                 // Test with a direct IP pattern matching first (hardcoded for reliability)
+                String originalMessage = plainSerializer.serialize(event.message());
                 if (originalMessage.matches(".*\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}.*")) {
                     plugin.getLogger().info("Direct IP pattern match found!");
                     
@@ -402,8 +393,6 @@ public class ChatFilterModule implements Listener {
                         ));
                     
                     event.message(replacement);
-                    finalMessage = replacement;
-                    filtered = true;
                     
                     // Notify the player
                     event.getPlayer().sendMessage(miniMessage.deserialize(
@@ -415,22 +404,21 @@ public class ChatFilterModule implements Listener {
                 } else {
                     // Try the loaded patterns
                     for (Pattern pattern : ipPatterns) {
-                        boolean matched = checkAndReplacePattern(event, originalMessage, finalMessage, pattern, "IP Address", regexMsg);
+                        boolean matched = checkAndReplacePattern(event, originalMessage, event.message(), pattern, "IP Address", regexMsg);
                         if (matched) {
-                            filtered = true;
                             plugin.getLogger().info("IP pattern matched and filtered");
-                            finalMessage = event.message(); // Update our reference to the message
                             break;
                         }
                     }
                 }
             }
 
-            if (regexConfig.getBoolean("block-spam-chars.enabled", true) && !filtered) {
+            if (regexConfig.getBoolean("block-spam-chars.enabled", true)) {
                 plugin.getLogger().info("Checking spam patterns (" + spamPatterns.size() + " patterns)");
                 
                 // First try with a direct spam check for repeated characters
                 boolean directSpamFound = false;
+                String originalMessage = plainSerializer.serialize(event.message());
                 char lastChar = '\0';
                 int count = 1;
                 int threshold = regexConfig.getInt("block-spam-chars.threshold", 4);
@@ -460,8 +448,6 @@ public class ChatFilterModule implements Listener {
                         ));
                     
                     event.message(replacement);
-                    finalMessage = replacement;
-                    filtered = true;
                     
                     // Notify the player
                     event.getPlayer().sendMessage(miniMessage.deserialize(
@@ -473,19 +459,18 @@ public class ChatFilterModule implements Listener {
                 } else {
                     // Try the loaded patterns
                     for (Pattern pattern : spamPatterns) {
-                        boolean matched = checkAndReplacePattern(event, originalMessage, finalMessage, pattern, "Character Spam", regexMsg);
+                        boolean matched = checkAndReplacePattern(event, originalMessage, event.message(), pattern, "Character Spam", regexMsg);
                         if (matched) {
-                            filtered = true;
                             plugin.getLogger().info("Spam pattern matched and filtered");
-                            finalMessage = event.message(); // Update our reference to the message
                             break;
                         }
                     }
                 }
             }
 
-            if (regexConfig.getBoolean("block-caps.enabled", true) && !filtered) {
+            if (regexConfig.getBoolean("block-caps.enabled", true)) {
                 plugin.getLogger().info("Checking caps patterns");
+                String originalMessage = plainSerializer.serialize(event.message());
                 int minLength = regexConfig.getInt("block-caps.min-length", 6);
                 int threshold = regexConfig.getInt("block-caps.threshold", 60);
                 
@@ -515,8 +500,6 @@ public class ChatFilterModule implements Listener {
                                 ));
                             
                             event.message(replacement);
-                            finalMessage = replacement; // Update our reference to the message
-                            filtered = true;
                             
                             event.getPlayer().sendMessage(miniMessage.deserialize(
                                 regexMsg.replace("<prefix>", prefix)
@@ -527,8 +510,9 @@ public class ChatFilterModule implements Listener {
                 }
             }
 
-            if (regexConfig.getBoolean("custom-patterns.enabled", false) && !filtered) {
+            if (regexConfig.getBoolean("custom-patterns.enabled", false)) {
                 plugin.getLogger().info("Checking custom patterns (" + customPatterns.size() + " patterns)");
+                String originalMessage = plainSerializer.serialize(event.message());
                 
                 if (customPatterns.isEmpty()) {
                     plugin.getLogger().info("No custom patterns loaded");
@@ -543,8 +527,6 @@ public class ChatFilterModule implements Listener {
                             ));
                         
                         event.message(replacement);
-                        finalMessage = replacement;
-                        filtered = true;
                         
                         // Notify the player
                         event.getPlayer().sendMessage(miniMessage.deserialize(
@@ -556,26 +538,15 @@ public class ChatFilterModule implements Listener {
                     } else {
                         // Try the loaded patterns
                         for (Pattern pattern : customPatterns) {
-                            boolean matched = checkAndReplacePattern(event, originalMessage, finalMessage, pattern, "Custom Pattern", regexMsg);
+                            boolean matched = checkAndReplacePattern(event, originalMessage, event.message(), pattern, "Custom Pattern", regexMsg);
                             if (matched) {
-                                filtered = true;
                                 plugin.getLogger().info("Custom pattern matched and filtered");
-                                finalMessage = event.message(); // Update our reference to the message
                                 break;
                             }
                         }
                     }
                 }
             }
-        } else {
-            plugin.getLogger().info("Regex check skipped - either bypassed or disabled");
-        }
-
-        if (filtered) {
-            plugin.getLogger().info("Message was filtered, final message set");
-            // We've already been setting event.message() throughout the process
-        } else {
-            plugin.getLogger().info("Message passed all filters");
         }
     }
 

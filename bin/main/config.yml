@@ -1,24 +1,32 @@
+# Advance users only:
 enabledcommands: [sudo]
+
+# Normal Users:
+
+# UwU-Watch Configuration
+version: 1.0.0 # dont change this
+
 
 # Module configuration
 modules:
   # GUI Module Configuration
+  # Work in progress, not all features are implemented yet
   GUIs:
     enabled: true
     prefix: "<gold>[<aqua>SkyeGUIs<gold>] "
 
   # Chat Filter Module Configuration
   ChatFilter:
-    enabled: true                           # Master switch for the chat filter
-    prefix: "<dark_red>[ChatFilter]</dark_red> "
+    enabled: true                            # Master switch for the chat filter
+    prefix: "<dark_red>[UwU-Watch]</dark_red> "
     regex:
-      enabled: true                         # Enable regex-based filtering
-      config-file: "chatfilter/regex.yml"
+      enabled: true                          # Enable regex-based filtering
+      config-file: "chatfilter/regex.yml"    # Path to the regex configuration file, Dont change unless you know what you are doing
     wordlist:
-      enabled: true                         # Enable wordlist-based filtering
-      config-file: "chatfilter/wordlist.yml"
-    blocked-words:                          # Global blocked words (in addition to wordlist.yml)
+      enabled: true                          # Enable wordlist-based filtering
+      config-file: "chatfilter/wordlist.yml" # Path to the wordlist configuration file, Dont change unless you know what you are doing
+    blocked-words:                           # Global blocked words (in addition to wordlist.yml for longer lists)
       - "badword1"
       - "badword2"
-    replacement: "<red>[Filtered]</red>"    # Text to replace filtered content with
-    debug: true                            # Enable detailed debug logs for chat filtering
+    replacement: "<red>[Filtered]</red>"     # Text to replace filtered content with
+    debug: false                             # Enable detailed debug logs for chat filtering

@@ -1,6 +1,21 @@
+#
 # SkyeNetP Messages
+# Uses minimessages for chat messages
+# use a tool like https://docs.papermc.io/misc/tools/minimessage-web-editor/
+# to get to minimessages help
+# 
+
+# Plugin name prefix
 prefix: "<gradient:#00c3ff:#ffff1c>SkyeNetP</gradient> "
+
+# Message when the plugin is reloaded/enabled
 reloaded: "<prefix><green>Config reloaded.</green>"
+
+# Message for command usage with no permissions
 no-permission: "<prefix><red>You do not have permission to use this command.</red>"
+
+# This command is not available in the console and must be ran by a player
 player-only: "<prefix><red>This command can only be used by players!</red>"
+
+# Message for plugin version
 version: "<prefix><gray>SkyeNetP version <version></gray>"
