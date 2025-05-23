@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      PLUGIN_VERSION: ${{ steps.extract_version.outputs.PLUGIN_VERSION }}
 
     steps:
     - name: Checkout code
@@ -29,20 +31,18 @@ jobs:
           gradle-${{ runner.os }}
 
     - name: Build the plugin
-      run: ./gradlew build
-
     - name: Extract plugin version
       id: extract_version
       run: |
+        VERSION=$(grep -oP 'version = \"\K[^"]+' build.gradle.kts)
+        echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_OUTPUT
         VERSION=$(grep -oP 'version = \"\K[^"]+' build.gradle.kts)
         echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v3
       with:
-        name: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
-        path: build/libs/SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
-
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -51,15 +51,18 @@ jobs:
     - name: Download build artifact
       uses: actions/download-artifact@v3
       with:
-        name: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
+        name: SkyeNetP-${{ needs.build.outputs.PLUGIN_VERSION }}.jar
 
     - name: Create GitHub Release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ env.PLUGIN_VERSION }}
-        release_name: SkyeNetP v${{ env.PLUGIN_VERSION }}
+        tag_name: v${{ needs.build.outputs.PLUGIN_VERSION }}
+        release_name: SkyeNetP v${{ needs.build.outputs.PLUGIN_VERSION }}
+        draft: false
+        prerelease: false
+        files: SkyeNetP-${{ needs.build.outputs.PLUGIN_VERSION }}.jar
         draft: false
         prerelease: false
         files: SkyeNetP-${{ env.PLUGIN_VERSION }}.jar
