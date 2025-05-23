@@ -1,5 +1,5 @@
 # SkyeNetP
-The Paper plugin for SkyeNet
+The Paper plugin for SkyeNetwork
 
 [![Build Plugin](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 

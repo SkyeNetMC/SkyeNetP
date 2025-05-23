@@ -13,11 +13,12 @@ modules:
     prefix: "<dark_red>[ChatFilter]</dark_red> "
     regex:
       enabled: true                         # Enable regex-based filtering
-      config-file: "modules/chatfilter/regex.yml"
+      config-file: "chatfilter/regex.yml"
     wordlist:
       enabled: true                         # Enable wordlist-based filtering
-      config-file: "modules/chatfilter/wordlist.yml"
+      config-file: "chatfilter/wordlist.yml"
     blocked-words:                          # Global blocked words (in addition to wordlist.yml)
       - "badword1"
       - "badword2"
     replacement: "<red>[Filtered]</red>"    # Text to replace filtered content with
+    debug: true                            # Enable detailed debug logs for chat filtering
