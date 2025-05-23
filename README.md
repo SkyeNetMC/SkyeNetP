@@ -1,23 +1,71 @@
-# SkyeNetP
-The Paper plugin for SkyeNetwork
-
-[![Build Plugin](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
-
-## Building
-This plugin uses Gradle. To build it:
-```bash
-./gradlew build
-```
-The built plugin jar will be in `build/libs/`.
+# SkyeNetP Plugin
 
 ## Features
-- [x] /fly in lobby
-- [x] /datapacks command for datapacks server
-- [x] Custom Gamemode Menu (/gamemodemenu)
-- [ ] Cosmetics
-- [ ] /swapranks command & gui
 
+### Chat Filter Module
+The Chat Filter Module provides advanced chat filtering capabilities for your Minecraft server. It includes the following features:
 
-> [!NOTE]  
-> commit done with `git commit -m "release: 1.0.0"` will make a new release
-> commit done with `git commit -m "Add new feature"` will make a new beta release
+1. **Dynamic Wordlist Filtering**:
+   - Filters chat messages based on a configurable list of blocked words.
+   - The blocked words are dynamically loaded from `wordlist.yml`.
+   - Debug logs are available to verify the `blockedWords` list and message content.
+
+2. **Regex-Based Filtering**:
+   - Filters chat messages using configurable regex patterns.
+   - Regex patterns are dynamically loaded and compiled from `regex.yml`.
+   - Debug logs are available to verify regex patterns and their matches.
+
+3. **Bypass Permissions**:
+   - Players can bypass wordlist and regex filtering if they have the appropriate permissions.
+   - Bypass permissions are dynamically fetched from the configuration files (`wordlist.yml` and `regex.yml`).
+   - Default permissions:
+     - Wordlist Bypass: `skyenetp.wordlist.bypass`
+     - Regex Bypass: `skyenetp.regex.bypass`
+
+4. **Configuration Options**:
+   - Enable or disable wordlist and regex filtering via the main configuration file.
+   - Customize blocked words and regex patterns in their respective configuration files.
+
+5. **Debugging and Logging**:
+   - Extensive debug logs to assist in verifying the functionality of wordlist and regex filtering.
+
+6. **Dynamic Reloading**:
+   - Configuration files can be reloaded dynamically without restarting the server (feature implementation pending).
+
+## Configuration Files
+
+### `wordlist.yml`
+- Contains the list of blocked words.
+- Example:
+  ```yaml
+  blocked-words:
+    - badword1
+    - badword2
+  bypass-permission: skyenetp.wordlist.bypass
+  ```
+
+### `regex.yml`
+- Contains the list of regex patterns for filtering chat messages.
+- Example:
+  ```yaml
+  regex-patterns:
+    - ".*badregex.*"
+    - "^forbidden.*"
+  bypass-permission: skyenetp.regex.bypass
+  ```
+
+## Commands
+
+### `/chatfilter reload`
+- Reloads the chat filter configuration files (`wordlist.yml` and `regex.yml`).
+- Permission: `skyenetp.chatfilter.reload`
+
+## Permissions
+
+- `skyenetp.wordlist.bypass`: Allows bypassing wordlist filtering.
+- `skyenetp.regex.bypass`: Allows bypassing regex filtering.
+- `skyenetp.chatfilter.reload`: Allows reloading the chat filter configuration.
+
+## Debugging
+
+Enable debug mode in the main configuration file to view detailed logs for chat filtering operations.

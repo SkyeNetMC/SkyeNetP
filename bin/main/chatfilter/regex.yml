@@ -6,7 +6,7 @@
 Enable-regex: true
 
 # Chat filter prefix (used in messages)
-prefix: "<dark_red>[ChatFilter]</dark_red> "
+prefix: "<dark_red>[UwU-Watch]</dark_red> "
 
 # Message sent when a pattern is matched
 # Available placeholders:

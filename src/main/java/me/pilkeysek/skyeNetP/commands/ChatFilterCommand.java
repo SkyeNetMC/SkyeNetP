@@ -28,6 +28,6 @@ public class ChatFilterCommand {
 
     private void reloadConfig(CommandSender sender) {
         chatFilter.reloadConfig();
-        sender.sendMessage(miniMessage.deserialize("<gold>[ChatFilter] <green>Configuration reloaded successfully."));
+        sender.sendMessage(miniMessage.deserialize("<gold>[UwU-Watch]</gold> <green>Configuration reloaded successfully."));
     }
 }
