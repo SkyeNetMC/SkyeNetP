@@ -1,7 +1,11 @@
-# SkyeGUIs - Example GUI panel (CommandPanels style)
+# SkyeGUIs - Example GUI panels (CommandPanels style)
+# Each GUI can have its own command and permission settings
+
 example:
   title: "<gold>Example GUI"
   size: 27
+  command: "examplegui"  # Command to open this GUI (/examplegui)
+  permission: "skyenetp.gui.example"  # Permission required to use the command
   items:
     11:
       material: DIAMOND
@@ -18,4 +22,76 @@ example:
         - "<gray>Click to get an emerald!"
       commands:
         - "give %player% emerald 1"
+      close: true
+
+staff_tools:
+  title: "<dark_red>Staff Tools"
+  size: 45
+  command: "stafftools"
+  permission: "skyenetp.gui.staff"
+  items:
+    10:
+      material: COMPASS
+      name: "<yellow>Teleport Menu"
+      lore:
+        - "<gray>Quick teleport options"
+      commands:
+        - "tp %player% spawn"
+      close: false
+    11:
+      material: DIAMOND_SWORD
+      name: "<red>Admin Kit"
+      lore:
+        - "<gray>Get admin equipment"
+      commands:
+        - "give %player% diamond_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5}]} 1"
+        - "give %player% diamond_armor 1"
+      close: true
+    12:
+      material: BARRIER
+      name: "<dark_red>Clear Inventory"
+      lore:
+        - "<red>⚠ This will clear your inventory!"
+        - "<gray>Click to clear"
+      commands:
+        - "clear %player%"
+      close: true
+
+gamemode_menu:
+  title: "<blue>Gamemode Menu"
+  size: 27
+  command: "gmmenu"
+  permission: "skyenetp.gui.gamemode"
+  items:
+    10:
+      material: GRASS_BLOCK
+      name: "<green>Survival"
+      lore:
+        - "<gray>Switch to survival mode"
+      commands:
+        - "gamemode survival %player%"
+      close: true
+    12:
+      material: DIAMOND_PICKAXE
+      name: "<yellow>Creative"
+      lore:
+        - "<gray>Switch to creative mode"
+      commands:
+        - "gamemode creative %player%"
+      close: true
+    14:
+      material: ENDER_EYE
+      name: "<purple>Spectator"
+      lore:
+        - "<gray>Switch to spectator mode"
+      commands:
+        - "gamemode spectator %player%"
+      close: true
+    16:
+      material: BOW
+      name: "<gold>Adventure"
+      lore:
+        - "<gray>Switch to adventure mode"
+      commands:
+        - "gamemode adventure %player%"
       close: true

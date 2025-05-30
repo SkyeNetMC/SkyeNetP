@@ -52,6 +52,14 @@ public final class SkyeNetP extends JavaPlugin {
         return miniMessage.deserialize(msg);
     }
 
+    public GUIModule getGUIModule() {
+        return guiModule;
+    }
+
+    public ChatFilterModule getChatFilterModule() {
+        return chatFilterModule;
+    }
+
     @Override
     public void onLoad() {
         // Initialize CommandAPI
@@ -61,42 +69,13 @@ public final class SkyeNetP extends JavaPlugin {
     @Override
     public void onEnable() {
         CommandAPI.onEnable();
-        // Ensure modules and subfolders exist
-        File modulesFolder = new File(getDataFolder().getParentFile(), "modules");
-        if (!modulesFolder.exists()) modulesFolder.mkdirs();
-        File guisFolder = new File(modulesFolder, "guis");
-        if (!guisFolder.exists()) guisFolder.mkdirs();
-        File chatfilterFolder = new File(modulesFolder, "chatfilter");
-        if (!chatfilterFolder.exists()) chatfilterFolder.mkdirs();
-
-        File guisFile = new File(modulesFolder, "modules-guis.yml");
-        if (!guisFile.exists()) {
-            try (java.io.FileWriter writer = new java.io.FileWriter(guisFile)) {
-                writer.write("# SkyeGUIs - Example GUI panel (CommandPanels style)\nexample:\n  title: \"<gold>Example GUI\"\n  size: 27\n  items:\n    11:\n      material: DIAMOND\n      name: \"<aqua>Diamond Button\"\n      lore:\n        - \"<gray>Click to get a diamond!\"\n      commands:\n        - \"give %player% diamond 1\"\n      close: true\n    15:\n      material: EMERALD\n      name: \"<green>Emerald Button\"\n      lore:\n        - \"<gray>Click to get an emerald!\"\n      commands:\n        - \"give %player% emerald 1\"\n      close: true\n");
-            } catch (Exception ignored) {}
-        }
-        // Create chatfilter folder
-        // Save default chat filter configs if they don't exist
-        File regexFile = new File(chatfilterFolder, "regex.yml");
-        if (!regexFile.exists()) {
-            try {
-                saveResource("chatfilter/regex.yml", false);
-                getLogger().info("Created default chat filter regex configuration.");
-            } catch (Exception e) {
-                getLogger().warning("Failed to create default chat filter regex configuration: " + e.getMessage());
-            }
-        }
         
-        File wordlistFile = new File(chatfilterFolder, "wordlist.yml");
-        if (!wordlistFile.exists()) {
-            try {
-                saveResource("chatfilter/wordlist.yml", false);
-                getLogger().info("Created default chat filter wordlist configuration.");
-            } catch (Exception e) {
-                getLogger().warning("Failed to create default chat filter wordlist configuration: " + e.getMessage());
-            }
+        // Create config and data folders
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
         }
 
+        // Save default config if it doesn't exist
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             saveDefaultConfig();
@@ -104,7 +83,7 @@ public final class SkyeNetP extends JavaPlugin {
         config = this.getConfig();
         loadMessages();
 
-        // Initialize and register modules
+        // Initialize modules
         guiModule = new GUIModule(this);
         chatFilterModule = new ChatFilterModule(this);
 
@@ -121,6 +100,10 @@ public final class SkyeNetP extends JavaPlugin {
             config.getBoolean("modules.GUIs.enabled", false)) {
             getServer().getPluginManager().registerEvents(guiModule, this);
             guiModule.registerGUICommands();
+            guiModule.registerManagementCommand();
+            getLogger().info("GUIModule enabled and registered with " + guiModule.getGUICount() + " GUIs");
+        } else {
+            getLogger().info("GUIModule is disabled in config");
         }
 
         // Register Brigadier commands
@@ -137,14 +120,55 @@ public final class SkyeNetP extends JavaPlugin {
             .withSubcommand(new CommandAPICommand("reload")
                 .withOptionalArguments(new StringArgument("target"))
                 .executes((sender, args) -> {
-                    File configFileReload = new File(getDataFolder(), "config.yml");
-                    if (!configFileReload.exists()) {
-                        saveDefaultConfig();
+                    String target = (String) args.getOrDefault("target", "all");
+                    
+                    switch (target.toLowerCase()) {
+                        case "config":
+                            this.reloadConfig();
+                            config = this.getConfig();
+                            loadMessages();
+                            sender.sendMessage(miniMessage.deserialize(
+                                config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
+                                "<green>Configuration reloaded!"));
+                            break;
+                        case "guis":
+                            if (guiModule != null) {
+                                guiModule.reloadGUIs();
+                                sender.sendMessage(miniMessage.deserialize(
+                                    config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
+                                    "<green>GUIs reloaded! (" + guiModule.getGUICount() + " GUIs loaded)"));
+                            } else {
+                                sender.sendMessage(miniMessage.deserialize(
+                                    config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
+                                    "<red>GUI Module is not enabled!"));
+                            }
+                            break;
+                        case "chatfilter":
+                            if (chatFilterModule != null) {
+                                chatFilterModule.reloadConfig();
+                                sender.sendMessage(miniMessage.deserialize(
+                                    config.getString("modules.ChatFilter.prefix", "<dark_red>[UwU-Watch]</dark_red> ") + 
+                                    "<green>Chat filter reloaded!"));
+                            } else {
+                                sender.sendMessage(miniMessage.deserialize(
+                                    config.getString("modules.ChatFilter.prefix", "<dark_red>[UwU-Watch]</dark_red> ") + 
+                                    "<red>Chat Filter Module is not enabled!"));
+                            }
+                            break;
+                        case "all":
+                        default:
+                            this.reloadConfig();
+                            config = this.getConfig();
+                            loadMessages();
+                            if (guiModule != null) {
+                                guiModule.reloadGUIs();
+                            }
+                            if (chatFilterModule != null) {
+                                chatFilterModule.reloadConfig();
+                            }
+                            sender.sendMessage(getMessage("reloaded"));
+                            break;
                     }
-                    this.reloadConfig();
-                    config = this.getConfig();
-                    loadMessages();
-                    sender.sendMessage(getMessage("reloaded"));
                 })
             )
             .withSubcommand(new CommandAPICommand("version")
