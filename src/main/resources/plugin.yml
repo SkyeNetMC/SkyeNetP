@@ -1,7 +1,7 @@
 name: SkyeNetP
 version: '${version}'
 main: me.pilkeysek.skyeNetP.SkyeNetP
-api-version: '1.21.8'
+api-version: '1.21.10'
 description: The paper plugin used for SkyeNetwork Developed by the SkyeNetwork Team
 website: https://skyemc.net
 authors: [SkyeNetwork Team]

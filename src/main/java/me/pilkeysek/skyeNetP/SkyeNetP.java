@@ -59,7 +59,7 @@ public final class SkyeNetP extends JavaPlugin {
     @Override
     public void onLoad() {
         // Initialize CommandAPI
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(this));
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
     }
 
     @Override
