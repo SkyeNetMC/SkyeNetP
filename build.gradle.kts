@@ -1,10 +1,11 @@
 plugins {
     java
+    id("io.github.goooler.shadow") version "8.1.8"
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = "me.pilkeysek"
-version = "1.1.0"
+version = "2.1.0"
 
 repositories {
     mavenCentral()
@@ -19,8 +20,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("dev.jorel:commandapi-bukkit-shade:9.7.0")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.4")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.7.0")
 }
 
 val targetJavaVersion = 21
@@ -35,6 +37,16 @@ tasks {
         }
     }
     runServer {
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.8")
+    }
+    compileJava {
+        options.compilerArgs.add("-Xlint:deprecation")
+    }
+    shadowJar {
+        archiveClassifier.set("")
+        relocate("dev.jorel.commandapi", "me.pilkeysek.skyeNetP.commandapi")
+    }
+    build {
+        dependsOn(shadowJar)
     }
 }

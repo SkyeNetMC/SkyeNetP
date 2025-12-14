@@ -1,5 +1,7 @@
 package me.pilkeysek.skyeNetP.menu;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -12,11 +14,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class CreativeMenu implements Listener {
-    private static final String MENU_TITLE = "Gamemode Menu";
+    private static final Component MENU_TITLE = Component.text("Gamemode Menu");
     private static final int WOOL_SLOT = 4; // Center slot of the first row
 
     public static void openMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 9, MENU_TITLE); // 1 row, still the correct method
+        Inventory inventory = Bukkit.createInventory(null, 9, MENU_TITLE);
         updateWoolState(inventory, player);
         player.openInventory(inventory);
     }
@@ -24,18 +26,16 @@ public class CreativeMenu implements Listener {
     private static void updateWoolState(Inventory inventory, Player player) {
         ItemStack wool = new ItemStack(player.getGameMode() == GameMode.CREATIVE ? Material.RED_WOOL : Material.LIME_WOOL);
         ItemMeta meta = wool.getItemMeta();
-        // setDisplayName is still present, but may be marked deprecated in some IDEs; it is not removed. Use as is.
-        meta.setDisplayName(player.getGameMode() == GameMode.CREATIVE ? 
-            "§cClick to set Adventure Mode" : 
-            "§aClick to set Creative Mode");
+        meta.displayName(player.getGameMode() == GameMode.CREATIVE ? 
+            Component.text("Click to set Adventure Mode", NamedTextColor.RED) : 
+            Component.text("Click to set Creative Mode", NamedTextColor.GREEN));
         wool.setItemMeta(meta);
         inventory.setItem(WOOL_SLOT, wool);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        // getTitle is still present, but may be marked deprecated in some IDEs; it is not removed. Use as is.
-        if (!event.getView().getTitle().equals(MENU_TITLE)) return;
+        if (!event.getView().title().equals(MENU_TITLE)) return;
         
         event.setCancelled(true);
         

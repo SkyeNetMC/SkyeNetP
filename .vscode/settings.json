@@ -3,5 +3,6 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/build.yml"
-    ]
+    ],
+    "figura.librariesFolderPath": "/home/skye/.local/share/.minecraft/figura/avatars/libraries/"
 }

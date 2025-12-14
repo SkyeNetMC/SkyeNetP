@@ -1,12 +1,12 @@
 name: SkyeNetP
-version: '${version}'
+version: '2.1.0'
 main: me.pilkeysek.skyeNetP.SkyeNetP
-api-version: '1.21.8'
+api-version: '1.21'
 description: The paper plugin used for SkyeNetwork Developed by the SkyeNetwork Team
 website: https://skyemc.net
 authors: [SkyeNetwork Team]
 modrinth-project-id: "IBSpJfbm"
-softdepend: [LuckPerms]
+depend: [CommandAPI]
 commands:
   creative:
     description: Opens the gamemode menu
@@ -24,6 +24,4 @@ permissions:
   skyenetp.command.reload:
     description: Allows reloading of the SkyeNetP plugin
     default: op
-  skyenetp.teleport.spawn:
-    description: Allows teleporting to spawn via proxy
-    default: op
+    

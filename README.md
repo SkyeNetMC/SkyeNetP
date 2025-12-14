@@ -1,6 +1,26 @@
 # SkyeNetP Plugin
 
-**Version:** ### `/creative`
+**Version:** 2.1.0
+
+A comprehensive Minecraft Paper plugin for SkyeNetwork servers, providing utility commands and GUI management features.
+
+## Installation
+
+1. Download the latest SkyeNetP-2.1.0.jar from the releases
+2. Place the jar file in your server's `plugins/` directory
+3. Restart your server
+4. Configure the plugin using the generated configuration files in `plugins/SkyeNetP/`
+
+## Requirements
+
+- **Minecraft Version**: 1.21.4+
+- **Server Software**: PaperMC
+- **Java Version**: 21+
+- **Dependencies**: CommandAPI (included)
+
+## Commands
+
+### `/creative`
 - Opens the gamemode menu for quick gamemode switching.
 - Permission: `skyenetp.command.creativemenu`
 
@@ -40,21 +60,23 @@
 - Main plugin management command.
 - Permission: `skyenetp.command.reload`
 - Subcommands:
-  - `reload [target]` - Reload configurations (all, config, guis, chatfilter)
-  - `version` - Show plugin version informationmprehensive Minecraft Paper plugin for SkyeNetwork servers, providing advanced chat filtering, utility commands, and GUI management features.
+  - `reload [target]` - Reload configurations (all, config, guis)
+  - `version` - Show plugin version information
 
 ## Features
 
-- **Chat Filter System**: Advanced chat filtering with wordlist and regex pattern support
 - **Flight Management**: Toggle flight mode with proper permissions
 - **Datapack Management**: List and manage server datapacks
 - **Creative Menu**: Quick gamemode switching interface
+- **GUI System**: Powerful custom GUI creation system
+- **Dynamic Configuration**: Hot-reload configuration files without server restart
+- **Permission-Based Access**: Granular permission system for all features
 - **Dynamic Configuration**: Hot-reload configuration files without server restart
 - **Permission-Based Access**: Granular permission system for all features
 
 ## Installation
 
-1. Download the latest SkyeNetP-1.1.0.jar from the releases
+1. Download the latest SkyeNetP-2.1.0.jar from the releases
 2. Place the jar file in your server's `plugins/` directory
 3. Restart your server
 4. Configure the plugin using the generated configuration files in `plugins/SkyeNetP/`
@@ -81,47 +103,21 @@
 - Enables `/datapack list` but stopping /datapack enable/disable from being used. - used on our SMP server
 - Permission: `skyenetp.datapacklist`
 
+### `/skyenetp`
+- Main plugin management command.
+- Permission: `skyenetp.command.reload`
+- Subcommands:
+  - `reload [target]` - Reload configurations (all, config, guis)
+  - `version` - Show plugin version information
 
+## Features
 
-### `/chatfilter reload`
-- Reloads the chat filter configuration files (`wordlist.yml` and `regex.yml`).
-- Permission: `skyenetp.chatfilter.reload`
-
-
-<details>
-<summary>### Chat Filter Info & Configuration</summary>
-
-### Chat Filter Module
-The Chat Filter Module provides advanced chat filtering capabilities for your Minecraft server. It includes the following features:
-
-1. **Dynamic Wordlist Filtering**:
-   - Filters chat messages based on a configurable list of blocked words.
-   - The blocked words are dynamically loaded from `wordlist.yml`.
-   - Debug logs are available to verify the `blockedWords` list and message content.
-
-2. **Regex-Based Filtering**:
-   - Filters chat messages using configurable regex patterns.
-   - Regex patterns are dynamically loaded and compiled from `regex.yml`.
-   - Debug logs are available to verify regex patterns and their matches.
-
-3. **Bypass Permissions**:
-   - Players can bypass wordlist and regex filtering if they have the appropriate permissions.
-   - Bypass permissions are dynamically fetched from the configuration files (`wordlist.yml` and `regex.yml`).
-   - Default permissions:
-     - Wordlist Bypass: `skyenetp.wordlist.bypass`
-     - Regex Bypass: `skyenetp.regex.bypass`
-
-4. **Configuration Options**:
-   - Enable or disable wordlist and regex filtering via the main configuration file.
-   - Customize blocked words and regex patterns in their respective configuration files.
-
-5. **Debugging and Logging**:
-   - Extensive debug logs to assist in verifying the functionality of wordlist and regex filtering.
-
-6. **Dynamic Reloading**:
-   - Configuration files can be reloaded dynamically without restarting the server.
-
-</details>
+- **Flight Management**: Toggle flight mode with proper permissions
+- **Datapack Management**: List and manage server datapacks
+- **Creative Menu**: Quick gamemode switching interface
+- **GUI System**: Powerful custom GUI creation system
+- **Dynamic Configuration**: Hot-reload configuration files without server restart
+- **Permission-Based Access**: Granular permission system for all features
 
 ## GUIs Module
 
@@ -183,36 +179,19 @@ The plugin comes with several example GUIs:
 
 ## Configuration Files
 
-### `wordlist.yml`
-- Contains the list of blocked words.
-- Example:
-  ```yaml
-  blocked-words:
-    - badword1
-    - badword2
-  bypass-permission: skyenetp.wordlist.bypass
-  ```
+All configuration files are automatically created in the `plugins/SkyeNetP/` directory when the plugin first runs.
 
-### `regex.yml`
-- Contains the list of regex patterns for filtering chat messages.
-- Example:
-  ```yaml
-  regex-patterns:
-    - ".*badregex.*"
-    - "^forbidden.*"
-  bypass-permission: skyenetp.regex.bypass
-  ```
+### `config.yml`
+- Main plugin configuration
+- Enable/disable modules
+- Configure module-specific settings
 
-
-
-</details>
+### `modules-guis.yml`
+- GUI definitions and configurations
+- Item layouts and commands
+- Permission settings
 
 ## Permissions
-
-### Chat Filter Permissions
-- `skyenetp.wordlist.bypass`: Allows bypassing wordlist filtering.
-- `skyenetp.regex.bypass`: Allows bypassing regex filtering.
-- `skyenetp.chatfilter.reload`: Allows reloading the chat filter configuration.
 
 ### GUI Module Permissions
 - `skyenetp.gui.admin`: Allows access to GUI management commands (`/skyeguis`)
@@ -226,7 +205,3 @@ The plugin comes with several example GUIs:
 - `skyenetp.fly`: Allows toggling flight mode
 - `skyenetp.datapacks`: Allows listing datapacks
 - `skyenetp.datapacklist`: Allows using the datapack list command
-
-## Debugging
-
-Enable debug mode in the main configuration file to view detailed logs for chat filtering operations.

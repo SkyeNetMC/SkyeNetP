@@ -8,13 +8,12 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.pilkeysek.skyeNetP.commands.DatapacksCommand;
-import me.pilkeysek.skyeNetP.commands.FlyCommand;
 import me.pilkeysek.skyeNetP.commands.GamemodeMenuCommand;
 import me.pilkeysek.skyeNetP.commands.SudoCommand;
-import me.pilkeysek.skyeNetP.commands.ChatFilterCommand;
+import me.pilkeysek.skyeNetP.handlers.SkyeNetVHandler;
 import me.pilkeysek.skyeNetP.menu.CreativeMenu;
+import me.pilkeysek.skyeNetP.modules.ChatModule;
 import me.pilkeysek.skyeNetP.modules.GUIModule;
-import me.pilkeysek.skyeNetP.modules.ChatFilterModule;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,7 +29,8 @@ public final class SkyeNetP extends JavaPlugin {
     private YamlConfiguration messagesConfig;
     private MiniMessage miniMessage = MiniMessage.miniMessage();
     private GUIModule guiModule;
-    private ChatFilterModule chatFilterModule;
+    private ChatModule chatModule;
+    private SkyeNetVHandler skyeNetVHandler;
 
     private void loadMessages() {
         File messagesFile = new File(getDataFolder(), "messages.yml");
@@ -48,16 +48,12 @@ public final class SkyeNetP extends JavaPlugin {
         String msg = getRawMessage(key);
         String prefix = messagesConfig.getString("prefix", "");
         msg = msg.replace("<prefix>", prefix);
-        msg = msg.replace("<version>", this.getName());
+        msg = msg.replace("<version>", getPluginMeta().getVersion());
         return miniMessage.deserialize(msg);
     }
 
     public GUIModule getGUIModule() {
         return guiModule;
-    }
-
-    public ChatFilterModule getChatFilterModule() {
-        return chatFilterModule;
     }
 
     @Override
@@ -85,15 +81,28 @@ public final class SkyeNetP extends JavaPlugin {
 
         // Initialize modules
         guiModule = new GUIModule(this);
-        chatFilterModule = new ChatFilterModule(this);
+        
+        // Initialize Chat module if enabled
+        if (config.getConfigurationSection("modules.Chat") != null &&
+            config.getBoolean("modules.Chat.enabled", false)) {
+            chatModule = new ChatModule(this);
+            getServer().getPluginManager().registerEvents(chatModule, this);
+            getLogger().info("ChatModule enabled");
+        } else {
+            getLogger().info("ChatModule is disabled in config");
+        }
+        
+        // Initialize SkyeNetV handler for proxy communication
+        skyeNetVHandler = new SkyeNetVHandler(this);
+        
+        // Register plugin message channels for SkyeNetV
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "skyenetv:teleport", skyeNetVHandler);
+        
+        getLogger().info("SkyeNetV proxy communication channels registered");
 
         // Register creative menu command and listener
         this.getCommand("creative").setExecutor(new GamemodeMenuCommand());
         getServer().getPluginManager().registerEvents(new CreativeMenu(), this);
-
-        // Always register ChatFilter (it checks enabled state internally)
-        getServer().getPluginManager().registerEvents(chatFilterModule, this);
-        new ChatFilterCommand(this, chatFilterModule);
 
         // Register GUI listener if enabled
         if (config.getConfigurationSection("modules.GUIs") != null &&
@@ -111,7 +120,6 @@ public final class SkyeNetP extends JavaPlugin {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
             SudoCommand.register(commands);
-            FlyCommand.register(commands);
             DatapacksCommand.register(commands);
         });
 
@@ -143,16 +151,14 @@ public final class SkyeNetP extends JavaPlugin {
                                     "<red>GUI Module is not enabled!"));
                             }
                             break;
-                        case "chatfilter":
-                            if (chatFilterModule != null) {
-                                chatFilterModule.reloadConfig();
+                        case "chat":
+                            if (chatModule != null) {
+                                chatModule.reload();
                                 sender.sendMessage(miniMessage.deserialize(
-                                    config.getString("modules.ChatFilter.prefix", "<dark_red>[UwU-Watch]</dark_red> ") + 
-                                    "<green>Chat filter reloaded!"));
+                                    "<green>Chat configuration reloaded!"));
                             } else {
                                 sender.sendMessage(miniMessage.deserialize(
-                                    config.getString("modules.ChatFilter.prefix", "<dark_red>[UwU-Watch]</dark_red> ") + 
-                                    "<red>Chat Filter Module is not enabled!"));
+                                    "<red>Chat Module is not enabled!"));
                             }
                             break;
                         case "all":
@@ -163,8 +169,8 @@ public final class SkyeNetP extends JavaPlugin {
                             if (guiModule != null) {
                                 guiModule.reloadGUIs();
                             }
-                            if (chatFilterModule != null) {
-                                chatFilterModule.reloadConfig();
+                            if (chatModule != null) {
+                                chatModule.reload();
                             }
                             sender.sendMessage(getMessage("reloaded"));
                             break;
@@ -184,6 +190,13 @@ public final class SkyeNetP extends JavaPlugin {
     @Override
     public void onDisable() {
         CommandAPI.onDisable();
+        
+        // Unregister SkyeNetV plugin message channels
+        if (skyeNetVHandler != null) {
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "skyenetv:teleport");
+            getLogger().info("SkyeNetV proxy communication channels unregistered");
+        }
+        
         // Plugin shutdown logic
     }
 }

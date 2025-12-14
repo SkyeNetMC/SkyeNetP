@@ -18,4 +18,8 @@ no-permission: "<prefix><red>You do not have permission to use this command.</re
 player-only: "<prefix><red>This command can only be used by players!</red>"
 
 # Message for plugin version
-version: "<prefix><gray>SkyeNetP version <version></gray>"
+version: "<prefix><gray>SkyeNetP version</gray> <white><version></white>"
+
+# Teleport command messages
+teleport:
+  spawn: "<prefix><green>Teleported to spawn!</green>"
