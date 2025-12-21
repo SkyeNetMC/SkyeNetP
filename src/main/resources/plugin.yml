@@ -6,6 +6,7 @@ description: The paper plugin used for SkyeNetwork Developed by the SkyeNetwork 
 website: https://skyemc.net
 authors: [SkyeNetwork Team]
 modrinth-project-id: "IBSpJfbm"
+depend: [CommandAPI]
 softdepend: [LuckPerms]
 commands:
   creative:

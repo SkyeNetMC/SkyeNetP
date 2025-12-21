@@ -20,4 +20,4 @@ modules:
     enabled: true
     # Chat format - Available placeholders: {prefix}, {suffix}, {player}, {message}
     # Supports MiniMessage formatting
-    format: "{prefix}<white>{player}</white>{suffix}<gray>:</gray> {message}"
+    format: "{prefix} <white>{player}</white>{suffix}<gray>:</gray> <white>{message}</white>"

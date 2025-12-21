@@ -10,10 +10,10 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.pilkeysek.skyeNetP.commands.DatapacksCommand;
 import me.pilkeysek.skyeNetP.commands.GamemodeMenuCommand;
 import me.pilkeysek.skyeNetP.commands.SudoCommand;
+import me.pilkeysek.skyeNetP.handlers.JoinMessageListener;
 import me.pilkeysek.skyeNetP.handlers.SkyeNetVHandler;
 import me.pilkeysek.skyeNetP.menu.CreativeMenu;
 import me.pilkeysek.skyeNetP.modules.ChatModule;
-import me.pilkeysek.skyeNetP.modules.GUIModule;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,7 +28,6 @@ public final class SkyeNetP extends JavaPlugin {
     public static FileConfiguration config;
     private YamlConfiguration messagesConfig;
     private MiniMessage miniMessage = MiniMessage.miniMessage();
-    private GUIModule guiModule;
     private ChatModule chatModule;
     private SkyeNetVHandler skyeNetVHandler;
 
@@ -52,19 +51,9 @@ public final class SkyeNetP extends JavaPlugin {
         return miniMessage.deserialize(msg);
     }
 
-    public GUIModule getGUIModule() {
-        return guiModule;
-    }
-
-    @Override
-    public void onLoad() {
-        // Initialize CommandAPI
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
-    }
-
     @Override
     public void onEnable() {
-        CommandAPI.onEnable();
+        // CommandAPI is loaded as an external plugin - no initialization needed
         
         // Create config and data folders
         if (!getDataFolder().exists()) {
@@ -78,9 +67,6 @@ public final class SkyeNetP extends JavaPlugin {
         }
         config = this.getConfig();
         loadMessages();
-
-        // Initialize modules
-        guiModule = new GUIModule(this);
         
         // Initialize Chat module if enabled
         if (config.getConfigurationSection("modules.Chat") != null &&
@@ -91,6 +77,9 @@ public final class SkyeNetP extends JavaPlugin {
         } else {
             getLogger().info("ChatModule is disabled in config");
         }
+
+        // Disable vanilla join message (Paper 1.21.10)
+        getServer().getPluginManager().registerEvents(new JoinMessageListener(), this);
         
         // Initialize SkyeNetV handler for proxy communication
         skyeNetVHandler = new SkyeNetVHandler(this);
@@ -103,17 +92,6 @@ public final class SkyeNetP extends JavaPlugin {
         // Register creative menu command and listener
         this.getCommand("creative").setExecutor(new GamemodeMenuCommand());
         getServer().getPluginManager().registerEvents(new CreativeMenu(), this);
-
-        // Register GUI listener if enabled
-        if (config.getConfigurationSection("modules.GUIs") != null &&
-            config.getBoolean("modules.GUIs.enabled", false)) {
-            getServer().getPluginManager().registerEvents(guiModule, this);
-            guiModule.registerGUICommands();
-            guiModule.registerManagementCommand();
-            getLogger().info("GUIModule enabled and registered with " + guiModule.getGUICount() + " GUIs");
-        } else {
-            getLogger().info("GUIModule is disabled in config");
-        }
 
         // Register Brigadier commands
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
@@ -136,20 +114,7 @@ public final class SkyeNetP extends JavaPlugin {
                             config = this.getConfig();
                             loadMessages();
                             sender.sendMessage(miniMessage.deserialize(
-                                config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
                                 "<green>Configuration reloaded!"));
-                            break;
-                        case "guis":
-                            if (guiModule != null) {
-                                guiModule.reloadGUIs();
-                                sender.sendMessage(miniMessage.deserialize(
-                                    config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
-                                    "<green>GUIs reloaded! (" + guiModule.getGUICount() + " GUIs loaded)"));
-                            } else {
-                                sender.sendMessage(miniMessage.deserialize(
-                                    config.getString("modules.GUIs.prefix", "<gold>[<aqua>SkyeGUIs<gold>] ") + 
-                                    "<red>GUI Module is not enabled!"));
-                            }
                             break;
                         case "chat":
                             if (chatModule != null) {
@@ -166,9 +131,6 @@ public final class SkyeNetP extends JavaPlugin {
                             this.reloadConfig();
                             config = this.getConfig();
                             loadMessages();
-                            if (guiModule != null) {
-                                guiModule.reloadGUIs();
-                            }
                             if (chatModule != null) {
                                 chatModule.reload();
                             }
@@ -189,8 +151,6 @@ public final class SkyeNetP extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        CommandAPI.onDisable();
-        
         // Unregister SkyeNetV plugin message channels
         if (skyeNetVHandler != null) {
             this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "skyenetv:teleport");

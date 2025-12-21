@@ -17,12 +17,16 @@ repositories {
         name = "sonatype"
         url = uri("https://oss.sonatype.org/content/groups/public/")
     }
+    maven {
+        name = "codemc"
+        url = uri("https://repo.codemc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.7.0")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.7.0")
 }
 
 val targetJavaVersion = 21
@@ -44,7 +48,6 @@ tasks {
     }
     shadowJar {
         archiveClassifier.set("")
-        relocate("dev.jorel.commandapi", "me.pilkeysek.skyeNetP.commandapi")
     }
     build {
         dependsOn(shadowJar)
